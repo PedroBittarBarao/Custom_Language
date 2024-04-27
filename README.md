@@ -20,6 +20,19 @@ while x<30
 	x=x+1
 }
 
+switch x
+case 1
+{
+y=10
+}
+case 2
+
+{
+
+y=11
+
+}
+
 print(x)
 print(y)
 ````
@@ -27,11 +40,12 @@ print(y)
 EBNF
 ```
 BLOCK = { STATEMENT };
-STATEMENT = [ ASSIGNMENT| ("int"|"string"), IDENTIFIER, ["=",BOOL_EXP] | PRINT | WHILE | IF ], "\n" ;
+STATEMENT = [ ASSIGNMENT| ("int"|"string"), IDENTIFIER, ["=",BOOL_EXP] | PRINT | WHILE | IF | SWITCH ], "\n" ;
 ASSIGNMENT = IDENTIFIER, "=", BOOL_EXP;
 PRINT = "print", "(", BOOL_EXP, ")" ;
-WHILE = "while", BOOL_EXP,["\n"], "{", ["\n"], { ( STATEMENT )}, "}";
-IF = "if", BOOL_EXP,["\n"],"{", ["\n"], { ( STATEMENT ) },"}", [ "else", "{" ,["\n"], { ( STATEMENT )},"}"] ;
+WHILE = "while", BOOL_EXP,{"\n"}, "{", {"\n"}, { ( STATEMENT )}, "}";
+IF = "if", BOOL_EXP,{"\n"},"{", {"\n"}, { ( STATEMENT ) },"}", [ "else", "{" ,{"\n"}, { ( STATEMENT )},"}"] ;
+SWITCH = "switch", IDENTIFIER,{{"\n"},"case", (NUMBER|STRING),{"\n"},"{",{"\n"},{STATEMENT},"}"};
 BOOL_EXP = BOOL_TERM, { ("or"), BOOL_TERM } ;
 BOOL_TERM = REL_EXP, { ("and"), REL_EXP } ;
 REL_EXP = EXPRESSION, { ("==" | ">" | "<"), EXPRESSION } ;
