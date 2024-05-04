@@ -52,18 +52,6 @@ REL_EXP = EXPRESSION, { ("==" | ">" | "<"), EXPRESSION } ;
 EXPRESSION = TERM, { ("+" | "-" ), TERM } ;
 TERM = FACTOR, { ("*" | "/"), FACTOR } ;
 FACTOR = NUMBER | STRING |IDENTIFIER | (("+" | "-" | "not"), FACTOR ) | "(", BOOL_EXP, ")" | "read", "(", ")" ;
-IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
-NUMBER = DIGIT, { DIGIT } ;
-letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
-       | "H" | "I" | "J" | "K" | "L" | "M" | "N"
-       | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
-       | "V" | "W" | "X" | "Y" | "Z" | "a" | "b"
-       | "c" | "d" | "e" | "f" | "g" | "h" | "i"
-       | "j" | "k" | "l" | "m" | "n" | "o" | "p"
-       | "q" | "r" | "s" | "t" | "u" | "v" | "w"
-       | "x" | "y" | "z" ;
-DIGIT = ( "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0" ) ;
-STRING = ({LETTER | DIGIT | "_"});
 ```
 
 ## Syntax Diagram
