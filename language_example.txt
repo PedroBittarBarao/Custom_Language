@@ -1,0 +1,35 @@
+int x = 21
+string y 
+y="fish"
+
+if x == 21 
+{
+	print("yes")
+} else {
+	print("no")
+	print(x)
+}
+
+while x<30 
+{
+	x=x+1
+}
+
+switch x (
+	case 1
+	{
+	y=10
+	}
+	case 2
+
+	{
+
+	y=11
+
+	}
+
+	default 
+	{
+		print(y)
+	}
+)
