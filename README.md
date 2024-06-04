@@ -1,5 +1,8 @@
 # Custom_Language
 
+## Usage
+python3 Compilador/main.py teste.bar
+
 
 ## Example:
 ```
