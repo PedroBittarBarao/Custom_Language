@@ -9,10 +9,9 @@ y="fish"
 
 if x == 21 
 {
-	print("yes")
+	print("x=21")
 } else {
 	print("no")
-	print(x)
 }
 
 while x<30 
@@ -21,15 +20,15 @@ while x<30
 }
 
 switch x (
-	case 1
+	case 10
 	{
-	y=10
+	print("Case 1")
 	}
-	case 2
+	case 20
 
 	{
 
-	y=11
+	print("Case 2")
 
 	}
 
