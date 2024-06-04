@@ -1,0 +1,25 @@
+int y
+y=20
+
+while y<31 {
+	y=y+1
+}
+
+if y==31{
+	print(y)
+}
+
+switch y (
+	case "fish" {
+		print("Case 1")
+	}
+	case 31 {
+		print("Case 2")
+	}
+	default {
+		print("default")
+	}
+)
+
+
+
