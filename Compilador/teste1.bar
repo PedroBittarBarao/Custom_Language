@@ -1,25 +1,34 @@
-int y
-y=20
+int x = 21
+string y 
+y="fish"
 
-while y<31 {
-	y=y+1
+if x == 21 
+{
+	print("x=21")
+} else {
+	print("no")
 }
 
-if y==31{
-	print(y)
+while x<30 
+{
+	x=x+1
 }
 
-switch y (
-	case "fish" {
-		print("Case 1")
+switch x (
+	case 10
+	{
+	print("Case 1")
 	}
-	case 31 {
-		print("Case 2")
+	case 20
+
+	{
+
+	print("Case 2")
+
 	}
-	default {
-		print("default")
+
+	default 
+	{
+		print(y)
 	}
 )
-
-
-

@@ -203,6 +203,8 @@ class prsr():
                     elif prsr.my_tokenizer.next.typ == "STRING":
                         case_expr = StrVal(value=prsr.my_tokenizer.next.value, children=[])
                         prsr.my_tokenizer.select_next()
+                    while prsr.my_tokenizer.next.typ == "ENDL":
+                        prsr.my_tokenizer.select_next()
                     if prsr.my_tokenizer.next.typ != "LBRACE":
                         raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
                     prsr.my_tokenizer.select_next()
@@ -215,6 +217,8 @@ class prsr():
                     switch_children.append(case_node)
                 elif prsr.my_tokenizer.next.typ == "default":
                     prsr.my_tokenizer.select_next()
+                    while prsr.my_tokenizer.next.typ == "ENDL":
+                        prsr.my_tokenizer.select_next()
                     if prsr.my_tokenizer.next.typ != "LBRACE":
                         raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
                     prsr.my_tokenizer.select_next()
