@@ -9,56 +9,45 @@
     char* str;
 }
 
-
 %token INT_TYPE STRING_TYPE PRINT WHILE IF ELSE SWITCH CASE READ OPEN_PAR CLOSE_PAR OPEN_BRC CLOSE_BRC
 %token OR AND EQ_OP GT_OP LT_OP ADD_OP SUB_OP MUL_OP DIV_OP NOT ASSIGN DEFAULT
 %token <num> NUMBER
 %token <str> IDENTIFIER STRING
+
+%start program
 
 %%
 
 program: BLOCK { printf("Program parsed successfully.\n"); }
        ;
 
-
-
-BLOCK: statement_list  { printf("Block parsed.\n"); }
+BLOCK: statement_list { printf("Block parsed.\n"); }
      ;
 
 statement_list: /* empty */
               | statement_list STATEMENT { printf("Statement parsed.\n"); }
               ;
 
-STATEMENT: '\n'
-         | INT_TYPE IDENTIFIER { printf("Declaration statement parsed.\n"); }
+STATEMENT: INT_TYPE IDENTIFIER { printf("Declaration statement parsed.\n"); }
          | STRING_TYPE IDENTIFIER { printf("Declaration statement parsed.\n"); }
          | STRING_TYPE IDENTIFIER ASSIGN STRING { printf("Declaration statement parsed.\n"); }
          | IDENTIFIER ASSIGN BOOL_EXP { printf("Assignment statement parsed.\n"); }
-         | IDENTIFIER ASSIGN STRING { printf("Assignment statement parsed.\n"); }
-         | INT_TYPE IDENTIFIER ASSIGN BOOL_EXP { printf("Declaration statement parsed.\n"); }   
+         | INT_TYPE IDENTIFIER ASSIGN BOOL_EXP { printf("Declaration statement parsed.\n"); }
          | PRINT OPEN_PAR BOOL_EXP CLOSE_PAR { printf("Print statement parsed.\n"); }
-         | WHILE BOOL_EXP empty_space OPEN_BRC  statement_list CLOSE_BRC { printf("While statement parsed.\n"); }
-         | IF BOOL_EXP empty_space OPEN_BRC  statement_list CLOSE_BRC else_block { printf("If-else statement parsed.\n"); }
-         | SWITCH IDENTIFIER empty_space OPEN_PAR case_list CLOSE_PAR { printf("Switch statement parsed.\n"); }
+         | WHILE BOOL_EXP OPEN_BRC statement_list CLOSE_BRC { printf("While statement parsed.\n"); }
+         | IF BOOL_EXP OPEN_BRC statement_list CLOSE_BRC else_block { printf("If-else statement parsed.\n"); }
+         | SWITCH IDENTIFIER OPEN_PAR case_list CLOSE_PAR { printf("Switch statement parsed.\n"); }
          ;
 
-
 case_list: /* empty */
-         | empty_space
-         | case_list CASE STRING empty_space OPEN_BRC statement_list CLOSE_BRC { printf("Case parsed.\n"); }
-         | case_list CASE NUMBER empty_space OPEN_BRC statement_list CLOSE_BRC { printf("Case parsed.\n"); }
-         | case_list DEFAULT empty_space OPEN_BRC statement_list CLOSE_BRC { printf("Default case parsed.\n"); }
-
+         | case_list CASE STRING OPEN_BRC statement_list CLOSE_BRC { printf("Case parsed.\n"); }
+         | case_list CASE NUMBER OPEN_BRC statement_list CLOSE_BRC { printf("Case parsed.\n"); }
+         | case_list DEFAULT OPEN_BRC statement_list CLOSE_BRC { printf("Default case parsed.\n"); }
          ;
 
 else_block: /* empty */
-          | ELSE empty_space OPEN_BRC statement_list CLOSE_BRC { printf("Else block parsed.\n"); }
+          | ELSE OPEN_BRC statement_list CLOSE_BRC { printf("Else block parsed.\n"); }
           ;
-
-empty_space:
-           | '\n' { printf("Empty space parsed.\n"); }
-           | empty_space '\n' { printf("Empty space parsed.\n"); }
-           ;
 
 BOOL_EXP: BOOL_TERM { printf("Boolean expression parsed.\n"); }
         | BOOL_EXP OR BOOL_TERM { printf("Boolean expression parsed.\n"); }
@@ -90,13 +79,11 @@ FACTOR: NUMBER { printf("Factor parsed.\n"); }
        | '+' FACTOR { printf("Factor parsed.\n"); }
        | '-' FACTOR { printf("Factor parsed.\n"); }
        | NOT FACTOR { printf("Factor parsed.\n"); }
-       | '(' BOOL_EXP ')' { printf("Factor parsed.\n"); }
-       | READ '(' ')' { printf("Factor parsed.\n"); }
+       | OPEN_PAR BOOL_EXP CLOSE_PAR { printf("Factor parsed.\n"); }
+       | READ OPEN_PAR CLOSE_PAR { printf("Factor parsed.\n"); }
        ;
 
-
 %%
-
 
 int yyerror(const char *msg) {
     fprintf(stderr, "Parser Error: %s\n", msg);
