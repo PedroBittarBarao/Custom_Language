@@ -3,24 +3,25 @@ from Nodes import *
 
 
 class Parser():
-    my_tokenizer:Tokenizer
-    
+    my_tokenizer: Tokenizer
+
     def __init__(self):
         pass
 
     @staticmethod
     def parse_expression():
-        result = Parser.parse_term() 
+        result = Parser.parse_term()
         while Parser.my_tokenizer.next.typ == "PLUS" or Parser.my_tokenizer.next.typ == "MINUS":
             if Parser.my_tokenizer.next.typ == "PLUS":
                 Parser.my_tokenizer.select_next()
-                result = BinOp("+",[result,Parser.parse_term()])
+                result = BinOp("+", [result, Parser.parse_term()])
             elif Parser.my_tokenizer.next.typ == "MINUS":
                 Parser.my_tokenizer.select_next()
-                result = BinOp("-",[result,Parser.parse_term()])
-            
+                result = BinOp("-", [result, Parser.parse_term()])
+
             else:
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
         return result
 
     @staticmethod
@@ -29,59 +30,65 @@ class Parser():
         while Parser.my_tokenizer.next.typ == "MULT" or Parser.my_tokenizer.next.typ == "DIV":
             if Parser.my_tokenizer.next.typ == "MULT":
                 Parser.my_tokenizer.select_next()
-                result = BinOp("*",[result,Parser.parse_factor()])
+                result = BinOp("*", [result, Parser.parse_factor()])
             elif Parser.my_tokenizer.next.typ == "DIV":
                 Parser.my_tokenizer.select_next()
-                result = BinOp("/",[result,Parser.parse_factor()])
-            
+                result = BinOp("/", [result, Parser.parse_factor()])
+
             else:
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
 
         return result
-    
+
     @staticmethod
     def parse_factor():
         if Parser.my_tokenizer.next.typ == "NUMBER":
-            result = IntVal(value=Parser.my_tokenizer.next.value,children=[])
+            result = IntVal(value=Parser.my_tokenizer.next.value, children=[])
             Parser.my_tokenizer.select_next()
             return result
         elif Parser.my_tokenizer.next.typ == "PLUS":
             Parser.my_tokenizer.select_next()
-            return UnOp("+",[Parser.parse_factor()])
+            return UnOp("+", [Parser.parse_factor()])
         elif Parser.my_tokenizer.next.typ == "MINUS":
             Parser.my_tokenizer.select_next()
-            return UnOp("-",[Parser.parse_factor()])
+            return UnOp("-", [Parser.parse_factor()])
         elif Parser.my_tokenizer.next.typ == "not":
             Parser.my_tokenizer.select_next()
-            return UnOp("not",[Parser.parse_factor()])
+            return UnOp("not", [Parser.parse_factor()])
         elif Parser.my_tokenizer.next.typ == "LPAREN":
             Parser.my_tokenizer.select_next()
             result = Parser.parse_bool_expression()
             if Parser.my_tokenizer.next.typ != "RPAREN":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
             Parser.my_tokenizer.select_next()
             return result
         elif Parser.my_tokenizer.next.typ == "ID":
-            result = Identifier(value=Parser.my_tokenizer.next.value,children=[])
+            result = Identifier(
+                value=Parser.my_tokenizer.next.value, children=[])
             name = Parser.my_tokenizer.next.value
             Parser.my_tokenizer.select_next()
             return result
         elif Parser.my_tokenizer.next.typ == "read":
             Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ != "LPAREN":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
             Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ != "RPAREN":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
             Parser.my_tokenizer.select_next()
-            return ReadNode(value=0,children=[])
+            return ReadNode(value=0, children=[])
         elif Parser.my_tokenizer.next.typ == "STRING":
-            result = StrVal(value=Parser.my_tokenizer.next.value,children=[])
+            result = StrVal(value=Parser.my_tokenizer.next.value, children=[])
             Parser.my_tokenizer.select_next()
             return result
         else:
-            raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
-        
+            raise SyntaxError(
+                f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
+
     @staticmethod
     def parse_statement():
         if Parser.my_tokenizer.next.typ == "ENDL":
@@ -89,7 +96,8 @@ class Parser():
             return NoOp()
 
         elif Parser.my_tokenizer.next.typ == "ID":
-            iden = Identifier(value=Parser.my_tokenizer.next.value, children=[])
+            iden = Identifier(
+                value=Parser.my_tokenizer.next.value, children=[])
             Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ == "=":
                 Parser.my_tokenizer.select_next()
@@ -103,19 +111,23 @@ class Parser():
                         Parser.my_tokenizer.select_next()
                         children.append(Parser.parse_bool_expression())
                 if Parser.my_tokenizer.next.typ != "RPAREN":
-                    raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                    raise SyntaxError(
+                        f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
                 Parser.my_tokenizer.select_next()
                 return FuncCall(value=iden.value, children=children)
             else:
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} with value {Parser.my_tokenizer.next.value}")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} with value {Parser.my_tokenizer.next.value}")
 
         elif Parser.my_tokenizer.next.typ == "int" or Parser.my_tokenizer.next.typ == "string":
             var_type = Parser.my_tokenizer.next.typ
             typeNode = TypeNode(value=var_type, children=[])
             Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ != "ID":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
-            iden = Identifier(value=Parser.my_tokenizer.next.value, children=[])
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+            iden = Identifier(
+                value=Parser.my_tokenizer.next.value, children=[])
             Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ == "=":
                 Parser.my_tokenizer.select_next()
@@ -124,17 +136,19 @@ class Parser():
                     raise SyntaxError(f"Cannot assign {value} to int")
                 elif var_type == "string" and type(value) != StrVal:
                     raise SyntaxError(f"Cannot assign {value} to string")
-                return VarDec(value=0, children=[iden,typeNode, value])
-            return VarDec(value=0, children=[iden,typeNode])
+                return VarDec(value=0, children=[iden, typeNode, value])
+            return VarDec(value=0, children=[iden, typeNode])
 
         elif Parser.my_tokenizer.next.typ == "print":
             Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ != "LPAREN":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
             Parser.my_tokenizer.select_next()
             result = Parser.parse_bool_expression()
             if Parser.my_tokenizer.next.typ != "RPAREN":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
             Parser.my_tokenizer.select_next()
             return PrintNode(value=0, children=[result])
 
@@ -144,7 +158,8 @@ class Parser():
             while Parser.my_tokenizer.next.typ == "ENDL":
                 Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ != "LBRACE":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
             Parser.my_tokenizer.select_next()
             statements = []
             while Parser.my_tokenizer.next.typ != "RBRACE":
@@ -160,7 +175,8 @@ class Parser():
             while Parser.my_tokenizer.next.typ == "ENDL":
                 Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ != "LBRACE":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
             Parser.my_tokenizer.select_next()
             statements = []
             while Parser.my_tokenizer.next.typ != "RBRACE":
@@ -171,7 +187,8 @@ class Parser():
             if Parser.my_tokenizer.next.typ == "else":
                 Parser.my_tokenizer.select_next()
                 if Parser.my_tokenizer.next.typ != "LBRACE":
-                    raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                    raise SyntaxError(
+                        f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
                 Parser.my_tokenizer.select_next()
                 else_statements = []
                 while Parser.my_tokenizer.next.typ != "RBRACE":
@@ -184,29 +201,35 @@ class Parser():
         elif Parser.my_tokenizer.next.typ == "switch":
             Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ != "ID":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
-            switch_expr = Identifier(value=Parser.my_tokenizer.next.value, children=[])
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+            switch_expr = Identifier(
+                value=Parser.my_tokenizer.next.value, children=[])
             switch_children = [switch_expr]
             Parser.my_tokenizer.select_next()
             if Parser.my_tokenizer.next.typ != "LPAREN":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
             Parser.my_tokenizer.select_next()
-            
+
             while Parser.my_tokenizer.next.typ != "RPAREN":
                 while Parser.my_tokenizer.next.typ == "ENDL":
                     Parser.my_tokenizer.select_next()
                 if Parser.my_tokenizer.next.typ == "case":
                     Parser.my_tokenizer.select_next()
                     if Parser.my_tokenizer.next.typ == "NUMBER":
-                        case_expr = IntVal(value=Parser.my_tokenizer.next.value, children=[])
+                        case_expr = IntVal(
+                            value=Parser.my_tokenizer.next.value, children=[])
                         Parser.my_tokenizer.select_next()
                     elif Parser.my_tokenizer.next.typ == "STRING":
-                        case_expr = StrVal(value=Parser.my_tokenizer.next.value, children=[])
+                        case_expr = StrVal(
+                            value=Parser.my_tokenizer.next.value, children=[])
                         Parser.my_tokenizer.select_next()
                     while Parser.my_tokenizer.next.typ == "ENDL":
                         Parser.my_tokenizer.select_next()
                     if Parser.my_tokenizer.next.typ != "LBRACE":
-                        raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                        raise SyntaxError(
+                            f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
                     Parser.my_tokenizer.select_next()
                     case_statements = []
                     while Parser.my_tokenizer.next.typ != "RBRACE":
@@ -220,7 +243,8 @@ class Parser():
                     while Parser.my_tokenizer.next.typ == "ENDL":
                         Parser.my_tokenizer.select_next()
                     if Parser.my_tokenizer.next.typ != "LBRACE":
-                        raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                        raise SyntaxError(
+                            f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
                     Parser.my_tokenizer.select_next()
                     default_statements = []
                     while Parser.my_tokenizer.next.typ != "RBRACE":
@@ -232,10 +256,12 @@ class Parser():
                 elif Parser.my_tokenizer.next.typ == "RPAREN":
                     break
                 else:
-                    raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                    raise SyntaxError(
+                        f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
 
             if Parser.my_tokenizer.next.typ != "RPAREN":
-                raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
+                raise SyntaxError(
+                    f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position}")
             Parser.my_tokenizer.select_next()
             switch_node = SwitchNode(children=switch_children)
             return switch_node
@@ -243,34 +269,33 @@ class Parser():
         else:
             return Parser.parse_bool_expression()
 
-
     @staticmethod
     def parse_block():
-        result = Block(value=0,children=[])
+        result = Block(value=0, children=[])
         while Parser.my_tokenizer.next.typ != "EOF":
             result.children.append(Parser.parse_statement())
         return result
-    
+
     @staticmethod
     def parse_rel_expression():
         result = Parser.parse_expression()
         if Parser.my_tokenizer.next.typ == "==":
             Parser.my_tokenizer.select_next()
-            result = BinOp("==",[result,Parser.parse_expression()])
+            result = BinOp("==", [result, Parser.parse_expression()])
         elif Parser.my_tokenizer.next.typ == ">":
             Parser.my_tokenizer.select_next()
-            result = BinOp(">",[result,Parser.parse_expression()])
+            result = BinOp(">", [result, Parser.parse_expression()])
         elif Parser.my_tokenizer.next.typ == "<":
             Parser.my_tokenizer.select_next()
-            result = BinOp("<",[result,Parser.parse_expression()])
+            result = BinOp("<", [result, Parser.parse_expression()])
         return result
-    
+
     @staticmethod
     def parse_bool_term():
         result = Parser.parse_rel_expression()
         while Parser.my_tokenizer.next.typ == "and":
             Parser.my_tokenizer.select_next()
-            result = BinOp("and",[result,Parser.parse_rel_expression()])
+            result = BinOp("and", [result, Parser.parse_rel_expression()])
         return result
 
     @staticmethod
@@ -278,17 +303,15 @@ class Parser():
         result = Parser.parse_bool_term()
         while Parser.my_tokenizer.next.typ == "or":
             Parser.my_tokenizer.select_next()
-            result = BinOp("or",[result,Parser.parse_bool_term()])
+            result = BinOp("or", [result, Parser.parse_bool_term()])
         return result
-        
-
 
     @staticmethod
     def run(code):
-        Parser.my_tokenizer = Tokenizer(code,0)
+        Parser.my_tokenizer = Tokenizer(code, 0)
         Parser.my_tokenizer.select_next()
         result = Parser.parse_block()
         if Parser.my_tokenizer.next.typ != "EOF":
-            raise SyntaxError(f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
+            raise SyntaxError(
+                f"Unexpected token {Parser.my_tokenizer.next.typ} at {Parser.my_tokenizer.position} ")
         return result
-    
