@@ -110,7 +110,7 @@ class Assignment(Node):
     def __str__(self):
         return f"Assignment({self.children[0],self.children[1]})"
     
-class printNode(Node):
+class PrintNode(Node):
     def evaluate(self,symbol_table):
         var = self.children[0].evaluate(symbol_table)
         if var[1] == "STRING":
@@ -122,7 +122,7 @@ class printNode(Node):
     def __str__(self):
         return f"printNode: ({self.children[0]})"
     
-class readNode(Node):
+class ReadNode(Node):
 
     def evaluate(self,symbol_table):
         val = int(input())
@@ -131,7 +131,7 @@ class readNode(Node):
     def __str__(self):
         return f"readNode: ({self.children[0]})"
     
-class ifNode(Node):
+class IfNode(Node):
     
         def evaluate(self,symbol_table):
             if self.children[0].evaluate(symbol_table)[0]:
@@ -142,7 +142,7 @@ class ifNode(Node):
         def __str__(self):
             return f"IfNode: ({self.children[0],self.children[1],self.children[2]})"
     
-class whileNode(Node):
+class WhileNode(Node):
     
         def evaluate(self,symbol_table):
             while self.children[0].evaluate(symbol_table)[0]:
