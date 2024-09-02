@@ -1,4 +1,4 @@
-class tkn():
+class Token():
     typ: str
     value: int
 
@@ -10,5 +10,5 @@ class tkn():
         return f"type: {self.typ} value: {self.value}"
 
 if __name__ == "__main__":
-    x = tkn("PLUS",1)
+    x = Token("PLUS",1)
     print(x)

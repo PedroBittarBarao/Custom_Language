@@ -1,4 +1,4 @@
-from prsr import prsr
+from Parser import Parser
 import sys
 from symbol_table import SymbolTable
 from func_table import FuncTable
@@ -9,4 +9,4 @@ with open(source, "r") as file:
     code = file.read()
 
 my_symbol_table = SymbolTable()
-prsr.run(code).evaluate(my_symbol_table)
+Parser.run(code).evaluate(my_symbol_table)
