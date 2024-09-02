@@ -10,10 +10,10 @@ class SymbolTable():
     
     def set_value(self, key, var):
         if key not in self.table:
-            raise Exception(f"Variable {key} not declared")
+            raise KeyError(f"Variable {key} not declared")
         self.table[key] = var # (value, type)
 
     def create_var(self, key, var_type):
         if key in self.table:
-            raise Exception(f"Variable {key} already declared")
+            raise KeyError(f"Variable {key} already declared")
         self.table[key] = (None,var_type)

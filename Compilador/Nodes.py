@@ -32,7 +32,7 @@ class BinOp (Node):
             if (self.children[0].evaluate(symbol_table)[1] == "STRING" and self.children[1].evaluate(symbol_table)[1] == "STRING") or (self.children[0].evaluate(symbol_table)[1] == "INT" and self.children[1].evaluate(symbol_table)[1] == "INT"):
                 return (int(self.children[0].evaluate(symbol_table)[0] == self.children[1].evaluate(symbol_table)[0]),"INT")
             else:
-                raise Exception(f"Unexpected token BinOp == {self.children[0].evaluate(symbol_table)[1]} and {self.children[1].evaluate(symbol_table)[1]}")
+                raise SyntaxError(f"Unexpected token BinOp == {self.children[0].evaluate(symbol_table)[1]} and {self.children[1].evaluate(symbol_table)[1]}")
         elif self.value == ">":
             return (int(self.children[0].evaluate(symbol_table)[0] > self.children[1].evaluate(symbol_table)[0]),"INT")
         elif self.value == "<":
@@ -44,7 +44,7 @@ class BinOp (Node):
         elif self.value == "CONCAT":
             return (str(self.children[0].evaluate(symbol_table)[0]) + str(self.children[1].evaluate(symbol_table)[0]),"STRING")
         else:
-            raise Exception(f"Unexpected token BinOp {self.value}")
+            raise SyntaxError(f"Unexpected token BinOp {self.value}")
     
     def __str__(self) -> str:
         return f"BinOp({self.value}: {self.children[0]}, {self.children[1]})"
@@ -67,7 +67,7 @@ class UnOp(Node):
         elif self.value == "not":
             return (not self.children[0].evaluate(symbol_table)[0],"INT")
         else:
-            raise Exception(f"Unexpected token {self.value} UnOp")
+            raise SyntaxError(f"Unexpected token {self.value} UnOp")
         
 
     def __str__(self) -> str:
@@ -103,7 +103,7 @@ class Assignment(Node):
         if symbol_table.has_value(self.children[0].value):
             type = symbol_table.get_value(self.children[0].value)[1]
             if type.lower() != (val[1]).lower():
-                raise Exception(f"Cannot assign {val[1]} to {type}")
+                raise ValueError(f"Cannot assign {val[1]} to {type}")
         symbol_table.set_value(self.children[0].value,val)
         
         
@@ -118,7 +118,7 @@ class PrintNode(Node):
         elif var[1] == "INT":
             print(int(var[0])) # cast do print para int
         else:
-            raise Exception(f"Unexpected print type {var}")
+            raise ValueError(f"Unexpected print type {var}")
     def __str__(self):
         return f"printNode: ({self.children[0]})"
     
@@ -173,7 +173,7 @@ class FuncDec(Node):
     def evaluate(self,symbol_table):
         name = self.children[0].value
         if FuncTable.isInTable(name):
-            raise Exception(f"Function {name} already exists")
+            raise KeyError(f"Function {name} already exists")
         FuncTable.setFunc(name,self)
         
 
@@ -181,11 +181,11 @@ class FuncCall(Node):
     def evaluate(self,symbol_table):
         func = FuncTable.getFunc(self.value)
         if func is None:
-            raise Exception(f"Function {self.value} does not exist")
+            raise KeyError(f"Function {self.value} does not exist")
         args = func.children[1:-1]
         # raise if len(args) != len(self.children)
         if len(args) != len(self.children):
-            raise Exception(f"Function {self.value} expected {len(args)} arguments, got {len(self.children)}")
+            raise TypeError(f"Function {self.value} expected {len(args)} arguments, got {len(self.children)}")
         new_table = SymbolTable()
         for i in range(len(args)):
             new_table.create_var(args[i].value)

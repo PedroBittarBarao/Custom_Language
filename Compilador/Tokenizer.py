@@ -55,7 +55,8 @@ class Tokenizer():
                     self.position += 1
             elif str.isalpha(self.source[self.position]):
                 start = self.position
-                while self.position < len(self.source) and (self.source[self.position].isalnum() or self.source[self.position] == "_"):
+                while self.position < len(self.source) and (
+                    self.source[self.position].isalnum() or self.source[self.position] == "_"):
                     self.position += 1
                 self.next = Token("ID",self.source[start:self.position])
                 if self.next.value in reserved_words:
@@ -77,22 +78,23 @@ class Tokenizer():
                     self.next = Token("CONCAT",0)
                     self.position += 2
                 else:
-                    raise Exception(f"Unexpected character {self.source[self.position]} at {self.position}")
+                    raise SyntaxError(
+                        f"Unexpected character {self.source[self.position]} at {self.position}")
             elif self.source[self.position] == '"':
                 start = self.position + 1
                 self.position += 1
                 while self.source[self.position] != '"':
                     self.position += 1
                     if self.position == len(self.source):
-                        raise Exception("Expected '\"'")
+                        raise SyntaxError("Expected '\"'")
                 self.next = Token("STRING",self.source[start:self.position])
                 self.position += 1
             elif self.source[self.position] == ",":
                 self.next = Token("COMMA",0)
                 self.position += 1
             else:
-                raise Exception(f"Unexpected character {self.source[self.position]} at {self.position}")
-            
+                raise SyntaxError(
+                    f"Unexpected character {self.source[self.position]} at {self.position}")            
         else:
             self.next = Token("EOF",0)
     
@@ -139,8 +141,4 @@ switch x (
     while x.next == None or x.next.typ != "EOF":
         print(x)
         x.select_next()
-
-        
-
-            
         
