@@ -3,7 +3,7 @@ class FuncTable():
 
     def setFunc(Name,Func):
         if Name in FuncTable.table:
-            raise Exception(f"Function {Name} already exists")
+            raise KeyError(f"Function {Name} already exists")
         FuncTable.table[Name] = Func
 
     def getFunc(Name):

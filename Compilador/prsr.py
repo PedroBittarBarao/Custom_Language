@@ -20,7 +20,7 @@ class prsr():
                 result = BinOp("-",[result,prsr.parse_term()])
             
             else:
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
         return result
 
     @staticmethod
@@ -35,7 +35,7 @@ class prsr():
                 result = BinOp("/",[result,prsr.parse_factor()])
             
             else:
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
 
         return result
     
@@ -58,7 +58,7 @@ class prsr():
             prsr.my_tokenizer.select_next()
             result = prsr.parse_bool_expression()
             if prsr.my_tokenizer.next.typ != "RPAREN":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
             prsr.my_tokenizer.select_next()
             return result
         elif prsr.my_tokenizer.next.typ == "ID":
@@ -69,10 +69,10 @@ class prsr():
         elif prsr.my_tokenizer.next.typ == "read":
             prsr.my_tokenizer.select_next()
             if prsr.my_tokenizer.next.typ != "LPAREN":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
             prsr.my_tokenizer.select_next()
             if prsr.my_tokenizer.next.typ != "RPAREN":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
             prsr.my_tokenizer.select_next()
             return readNode(value=0,children=[])
         elif prsr.my_tokenizer.next.typ == "STRING":
@@ -80,7 +80,7 @@ class prsr():
             prsr.my_tokenizer.select_next()
             return result
         else:
-            raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
+            raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
         
     @staticmethod
     def parse_statement():
@@ -103,38 +103,38 @@ class prsr():
                         prsr.my_tokenizer.select_next()
                         children.append(prsr.parse_bool_expression())
                 if prsr.my_tokenizer.next.typ != "RPAREN":
-                    raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                    raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
                 prsr.my_tokenizer.select_next()
                 return FuncCall(value=iden.value, children=children)
             else:
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} with value {prsr.my_tokenizer.next.value}")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} with value {prsr.my_tokenizer.next.value}")
 
         elif prsr.my_tokenizer.next.typ == "int" or prsr.my_tokenizer.next.typ == "string":
             var_type = prsr.my_tokenizer.next.typ
             typeNode = TypeNode(value=var_type, children=[])
             prsr.my_tokenizer.select_next()
             if prsr.my_tokenizer.next.typ != "ID":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
             iden = Identifier(value=prsr.my_tokenizer.next.value, children=[])
             prsr.my_tokenizer.select_next()
             if prsr.my_tokenizer.next.typ == "=":
                 prsr.my_tokenizer.select_next()
                 value = prsr.parse_bool_expression()
                 if var_type == "int" and type(value) != IntVal:
-                    raise Exception(f"Cannot assign {value} to int")
+                    raise SyntaxError(f"Cannot assign {value} to int")
                 elif var_type == "string" and type(value) != StrVal:
-                    raise Exception(f"Cannot assign {value} to string")
+                    raise SyntaxError(f"Cannot assign {value} to string")
                 return VarDec(value=0, children=[iden,typeNode, value])
             return VarDec(value=0, children=[iden,typeNode])
 
         elif prsr.my_tokenizer.next.typ == "print":
             prsr.my_tokenizer.select_next()
             if prsr.my_tokenizer.next.typ != "LPAREN":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
             prsr.my_tokenizer.select_next()
             result = prsr.parse_bool_expression()
             if prsr.my_tokenizer.next.typ != "RPAREN":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
             prsr.my_tokenizer.select_next()
             return printNode(value=0, children=[result])
 
@@ -144,7 +144,7 @@ class prsr():
             while prsr.my_tokenizer.next.typ == "ENDL":
                 prsr.my_tokenizer.select_next()
             if prsr.my_tokenizer.next.typ != "LBRACE":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
             prsr.my_tokenizer.select_next()
             statements = []
             while prsr.my_tokenizer.next.typ != "RBRACE":
@@ -160,7 +160,7 @@ class prsr():
             while prsr.my_tokenizer.next.typ == "ENDL":
                 prsr.my_tokenizer.select_next()
             if prsr.my_tokenizer.next.typ != "LBRACE":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
             prsr.my_tokenizer.select_next()
             statements = []
             while prsr.my_tokenizer.next.typ != "RBRACE":
@@ -171,7 +171,7 @@ class prsr():
             if prsr.my_tokenizer.next.typ == "else":
                 prsr.my_tokenizer.select_next()
                 if prsr.my_tokenizer.next.typ != "LBRACE":
-                    raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                    raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
                 prsr.my_tokenizer.select_next()
                 else_statements = []
                 while prsr.my_tokenizer.next.typ != "RBRACE":
@@ -184,12 +184,12 @@ class prsr():
         elif prsr.my_tokenizer.next.typ == "switch":
             prsr.my_tokenizer.select_next()
             if prsr.my_tokenizer.next.typ != "ID":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
             switch_expr = Identifier(value=prsr.my_tokenizer.next.value, children=[])
             switch_children = [switch_expr]
             prsr.my_tokenizer.select_next()
             if prsr.my_tokenizer.next.typ != "LPAREN":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
             prsr.my_tokenizer.select_next()
             
             while prsr.my_tokenizer.next.typ != "RPAREN":
@@ -206,7 +206,7 @@ class prsr():
                     while prsr.my_tokenizer.next.typ == "ENDL":
                         prsr.my_tokenizer.select_next()
                     if prsr.my_tokenizer.next.typ != "LBRACE":
-                        raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                        raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
                     prsr.my_tokenizer.select_next()
                     case_statements = []
                     while prsr.my_tokenizer.next.typ != "RBRACE":
@@ -220,7 +220,7 @@ class prsr():
                     while prsr.my_tokenizer.next.typ == "ENDL":
                         prsr.my_tokenizer.select_next()
                     if prsr.my_tokenizer.next.typ != "LBRACE":
-                        raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                        raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
                     prsr.my_tokenizer.select_next()
                     default_statements = []
                     while prsr.my_tokenizer.next.typ != "RBRACE":
@@ -232,10 +232,10 @@ class prsr():
                 elif prsr.my_tokenizer.next.typ == "RPAREN":
                     break
                 else:
-                    raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                    raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
 
             if prsr.my_tokenizer.next.typ != "RPAREN":
-                raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
+                raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position}")
             prsr.my_tokenizer.select_next()
             switch_node = SwitchNode(children=switch_children)
             return switch_node
@@ -289,6 +289,6 @@ class prsr():
         prsr.my_tokenizer.select_next()
         result = prsr.parse_block()
         if prsr.my_tokenizer.next.typ != "EOF":
-            raise Exception(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
+            raise SyntaxError(f"Unexpected token {prsr.my_tokenizer.next.typ} at {prsr.my_tokenizer.position} ")
         return result
     
