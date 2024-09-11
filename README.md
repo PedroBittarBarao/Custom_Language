@@ -1,7 +1,8 @@
 # Custom_Language
 
 ## Usage
-python3 Compilador/main.py teste.bar
+python3 Compilador/main.py teste1.bar
+teste2 and teste3 have wrong type attributions and should raise errors
 
 
 ## Example:
