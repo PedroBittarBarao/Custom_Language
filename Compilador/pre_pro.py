@@ -46,6 +46,8 @@ class PrePro:
         """
         comments = re.sub(r"(?<!\d|-)--.*$", "", source, flags=re.MULTILINE)
         return comments
+    def __str__(self) -> str:
+        pass
 
 
 if __name__ == "__main__":

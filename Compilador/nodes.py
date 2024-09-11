@@ -44,7 +44,9 @@ class Node:
         evaluate(symbol_table): Evaluates the node using the given symbol table.
     """
 
-    def __init__(self, value=0, children=[]):
+    def __init__(self, value=0, children=None):
+        if children is None:
+            children = []
         self.value = value
         self.children = children
 
@@ -59,8 +61,6 @@ class Node:
         - None
 
         """
-        pass
-
 
 class NoOp(Node):
     """
@@ -248,12 +248,11 @@ class UnOp(Node):
     def evaluate(self, symbol_table):
         if self.value == "+":
             return (self.children[0].evaluate(symbol_table)[0], "INT")
-        elif self.value == "-":
+        if self.value == "-":
             return (-self.children[0].evaluate(symbol_table)[0], "INT")
-        elif self.value == "not":
+        if self.value == "not":
             return (not self.children[0].evaluate(symbol_table)[0], "INT")
-        else:
-            raise SyntaxError(f"Unexpected token {self.value} UnOp")
+        raise SyntaxError(f"Unexpected token {self.value} UnOp")
 
     def __str__(self) -> str:
         return f"UnOp({self.value},{self.children})"
@@ -287,7 +286,7 @@ class Block(Node):
     def evaluate(self, symbol_table):
         for child in self.children:
             # print(child)
-            if type(child) == ReturnNode:
+            if isinstance(child, ReturnNode):
                 return child.evaluate(symbol_table)
             child.evaluate(symbol_table)
 
@@ -364,9 +363,9 @@ class Assignment(Node):
     def evaluate(self, symbol_table):
         val = self.children[1].evaluate(symbol_table)
         if symbol_table.has_value(self.children[0].value):
-            type = symbol_table.get_value(self.children[0].value)[1]
-            if type.lower() != (val[1]).lower():
-                raise ValueError(f"Cannot assign {val[1]} to {type}")
+            type_ = symbol_table.get_value(self.children[0].value)[1]
+            if type_.lower() != (val[1]).lower():
+                raise ValueError(f"Cannot assign {val[1]} to {type_}")
         symbol_table.set_value(self.children[0].value, val)
 
     def __str__(self):
@@ -387,12 +386,7 @@ class PrintNode(Node):
         None
     """
 
-    """
-    Returns a string representation of the PrintNode.
 
-    Returns:
-        str: The string representation of the PrintNode.
-    """
     def evaluate(self, symbol_table):
         var = self.children[0].evaluate(symbol_table)
         if var[1] == "STRING":
@@ -501,14 +495,6 @@ class StrVal(Node):
         tuple: A tuple containing the string value and its type.
 
     """
-
-    """
-    Returns a string representation of the StrVal node.
-
-    Returns:
-        str: A string representation of the StrVal node.
-
-    """
     def evaluate(self, symbol_table):
         return (str(self.value), "STRING")
 
@@ -525,13 +511,6 @@ class VarDec(Node):
 
     Returns:
         None
-    """
-
-    """
-    Returns a string representation of the VarDec node.
-
-    Returns:
-        str: The string representation of the VarDec node.
     """
     def evaluate(self, symbol_table):
         var_type = self.children[1].value
@@ -590,9 +569,9 @@ class FuncCall(Node):
                 f"Function {self.value} expected {len(args)} arguments, got {len(self.children)}"
             )
         new_table = SymbolTable()
-        for i in range(len(args)):
-            new_table.create_var(args[i].value)
-            new_table.set_value(args[i].value, self.children[i].evaluate(symbol_table))
+        for i, arg in enumerate(args):
+            new_table.create_var(arg.value, var_type="None")
+            new_table.set_value(arg.value, self.children[i].evaluate(symbol_table))
         return func.children[-1].evaluate(new_table)
 
 
@@ -622,20 +601,13 @@ class SwitchNode(Node):
     Returns:
         None
     """
-
-    """
-    Returns a string representation of the SwitchNode.
-
-    Returns:
-        str: The string representation of the SwitchNode.
-    """
     def evaluate(self, symbol_table):
         switch_value = self.children[0].evaluate(symbol_table)[0]
         for i in range(1, len(self.children)):
             if isinstance(self.children[i], DefaultNode):
                 self.children[i].evaluate(symbol_table)
                 return
-            elif self.children[i].children[0].evaluate(symbol_table)[0] == switch_value:
+            if self.children[i].children[0].evaluate(symbol_table)[0] == switch_value:
                 self.children[i].evaluate(symbol_table)
                 return
         return
@@ -673,12 +645,6 @@ class DefaultNode(Node):
         None
     """
 
-    """
-    Returns a string representation of the DefaultNode.
-
-    Returns:
-        str: The string representation of the DefaultNode.
-    """
     def evaluate(self, symbol_table):
         self.children[0].evaluate(symbol_table)
 

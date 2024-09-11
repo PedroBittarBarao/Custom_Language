@@ -188,7 +188,7 @@ class Tokenizer:
 
 
 if __name__ == "__main__":
-    code = """int x = 21
+    CODE = """int x = 21
 string y 
 y="fish"
 
@@ -223,7 +223,7 @@ switch x (
 		print(y)
 	}
 )"""
-    x = Tokenizer(code, 0)
-    while x.next == None or x.next.typ != "EOF":
+    x = Tokenizer(CODE, 0)
+    while x.next is None or x.next.typ != "EOF":
         print(x)
         x.select_next()
