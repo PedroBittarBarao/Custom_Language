@@ -1,2 +1,3 @@
 string y = "string"
 y=1
+-- wrong type attribution, will not run
