@@ -48,6 +48,14 @@ class Token:
             str: A string in the format "type: <typ> value: <value>".
         """
         return f"type: {self.typ} value: {self.value}"
+    def __repr__(self):
+        """
+        Returns a string representation of the Token.
+        
+        Returns:
+            str: A string in the format "Token(<typ>, <value>)".
+        """
+        return f"Token({self.typ}, {self.value})"
 
 
 if __name__ == "__main__":
