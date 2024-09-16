@@ -1,0 +1,3 @@
+int x = 21
+string y 
+y="fish"
