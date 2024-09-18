@@ -7,7 +7,7 @@ various token types such as operators, parentheses, keywords, and literals from 
 It supports handling reserved words, operators, numbers, strings, and other common syntax elements.
 
 Classes:
-    Tokenizer: A class that processes source code and generates tokens for parsing.
+    MyTokenizer: A class that processes source code and generates tokens for parsing.
 
 Functions:
     __init__(self, source, position):
@@ -24,7 +24,7 @@ Reserved Words:
     A predefined list of reserved keywords such as 'if', 'while', 'print', etc.
 """
 
-from token import Token
+from my_token import MyToken
 from pre_pro import PrePro
 
 reserved_words = [
@@ -63,12 +63,12 @@ class Tokenizer:
 
     source: str
     position: int
-    next: Token
+    next: MyToken
     next = None
 
     def __init__(self, source, position) -> None:
         """
-        Initializes the Tokenizer object with a source string and starting position.
+        Initializes the MyTokenizer object with a source string and starting position.
 
         Args:
             source (str): The source code to be tokenized.
@@ -90,44 +90,44 @@ class Tokenizer:
             # Skip whitespace and tabs
             while self.source[self.position] == " " or self.source[self.position] == "\t":
                 if self.position == len(self.source) - 1:
-                    self.next = Token("EOF", 0)
+                    self.next = MyToken("EOF", 0)
                     return
                 self.position += 1
 
             # Identify tokens based on the current character
             if self.source[self.position] == "+":
                 self.position += 1
-                self.next = Token("PLUS", 0)
+                self.next = MyToken("PLUS", 0)
             elif self.source[self.position] == "-":
-                self.next = Token("MINUS", 0)
+                self.next = MyToken("MINUS", 0)
                 self.position += 1
             elif self.source[self.position] == "*":
-                self.next = Token("MULT", 0)
+                self.next = MyToken("MULT", 0)
                 self.position += 1
             elif self.source[self.position] == "/":
-                self.next = Token("DIV", 0)
+                self.next = MyToken("DIV", 0)
                 self.position += 1
             elif self.source[self.position] == "(":
-                self.next = Token("LPAREN", 0)
+                self.next = MyToken("LPAREN", 0)
                 self.position += 1
             elif self.source[self.position] == ")":
-                self.next = Token("RPAREN", 0)
+                self.next = MyToken("RPAREN", 0)
                 self.position += 1
             elif self.source[self.position].isdigit():
                 # Handle multi-digit numbers
                 start = self.position
                 while self.position < len(self.source) and self.source[self.position].isdigit():
                     self.position += 1
-                self.next = Token("NUMBER", int(self.source[start:self.position]))
+                self.next = MyToken("NUMBER", int(self.source[start:self.position]))
             elif self.source[self.position] == "\n":
-                self.next = Token("ENDL", 0)
+                self.next = MyToken("ENDL", 0)
                 self.position += 1
             elif self.source[self.position] == "=":
                 if self.source[self.position + 1] == "=":
-                    self.next = Token("==", 0)
+                    self.next = MyToken("==", 0)
                     self.position += 2
                 else:
-                    self.next = Token("=", 0)
+                    self.next = MyToken("=", 0)
                     self.position += 1
             elif str.isalpha(self.source[self.position]):
                 # Handle identifiers and reserved words
@@ -135,24 +135,24 @@ class Tokenizer:
                 while self.position < len(self.source) and (
                     self.source[self.position].isalnum() or self.source[self.position] == "_"):
                     self.position += 1
-                self.next = Token("ID", self.source[start:self.position])
+                self.next = MyToken("ID", self.source[start:self.position])
                 if self.next.value in reserved_words:
-                    self.next = Token(self.next.value, 0)
+                    self.next = MyToken(self.next.value, 0)
             elif self.source[self.position] == ">":
-                self.next = Token(">", 0)
+                self.next = MyToken(">", 0)
                 self.position += 1
             elif self.source[self.position] == "<":
-                self.next = Token("<", 0)
+                self.next = MyToken("<", 0)
                 self.position += 1
             elif self.source[self.position] == "{":
-                self.next = Token("LBRACE", 0)
+                self.next = MyToken("LBRACE", 0)
                 self.position += 1
             elif self.source[self.position] == "}":
-                self.next = Token("RBRACE", 0)
+                self.next = MyToken("RBRACE", 0)
                 self.position += 1
             elif self.source[self.position] == ".":
                 if self.source[self.position + 1] == ".":
-                    self.next = Token("CONCAT", 0)
+                    self.next = MyToken("CONCAT", 0)
                     self.position += 2
                 else:
                     raise SyntaxError(f"""Unexpected character {self.source[self.position]}
@@ -165,16 +165,16 @@ class Tokenizer:
                     self.position += 1
                     if self.position == len(self.source):
                         raise SyntaxError("Expected '\"'")
-                self.next = Token("STRING", self.source[start:self.position])
+                self.next = MyToken("STRING", self.source[start:self.position])
                 self.position += 1
             elif self.source[self.position] == ",":
-                self.next = Token("COMMA", 0)
+                self.next = MyToken("COMMA", 0)
                 self.position += 1
             else:
                 raise SyntaxError(f"""Unexpected character {self.source[self.position]}
                                    at {self.position}""")
         else:
-            self.next = Token("EOF", 0)
+            self.next = MyToken("EOF", 0)
 
     def __str__(self) -> str:
         """
@@ -223,7 +223,7 @@ switch x (
 		print(y)
 	}
 )"""
-    x = Tokenizer(CODE, 0)
+    x = MyTokenizer(CODE, 0)
     while x.next is None or x.next.typ != "EOF":
         print(x)
         x.select_next()
