@@ -1,0 +1,22 @@
+
+Token: 258, Lexeme: int
+Token: 284, Lexeme: x
+Token: 281, Lexeme: =
+Token: 283, Lexeme: 21
+
+Token: 259, Lexeme: string
+Token: 284, Lexeme: y
+
+Token: 284, Lexeme: y
+Token: 281, Lexeme: =
+Token: 285, Lexeme: "fish"
+
+
+
+
+
+
+
+
+
+
